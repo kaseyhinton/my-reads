@@ -6,19 +6,24 @@ import './App.css'
 import Book from './components/book';
 
 class BooksApp extends React.Component {
-  state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
-    showSearchPage: false,
-    currentlyReadingBooks: [],
-    wantToReadBooks: [],
-    readBooks: []
-  }
 
+  constructor(props){
+    super(props)
+    this.state = {
+      /**
+       * TODO: Instead of using this state variable to keep track of which page
+       * we're on, use the URL in the browser's address bar. This will ensure that
+       * users can use the browser's back and forward buttons to navigate between
+       * pages, as well as provide a good URL they can bookmark and share.
+       */
+      showSearchPage: false,
+      currentlyReadingBooks: [],
+      wantToReadBooks: [],
+      readBooks: [],
+      searchBooks: []
+    }
+    this.handleChange = this.handleChange.bind(this);
+  }
 
   componentDidMount() {
     this.reload();
@@ -33,13 +38,29 @@ class BooksApp extends React.Component {
     console.log(books);
   }
 
+  async handleChange(event) {
+    let searchTerm = event.target.value;
+    if (searchTerm === ''){
+      this.setState({
+        searchBooks : []
+      })
+      return;
+    }
+    try {
+      const searchBooks = await BooksAPI.search(searchTerm);
+      this.setState({ searchBooks });
+    } catch(error) {
+      this.setState({ searchBooks: [] });
+    }
+  }
+
   render() {
     return (
       <div className="app">
         {this.state.showSearchPage ? (
           <div className="search-books">
             <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</a>
+              <a className="close-search" onClick={() => this.setState({ showSearchPage: false, searchBooks: [] })}>Close</a>
               <div className="search-books-input-wrapper">
                 {/*
                   NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -49,12 +70,19 @@ class BooksApp extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author"/>
-
+                <input type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search by title or author"/>
               </div>
             </div>
             <div className="search-books-results">
-              <ol className="books-grid"></ol>
+               <ol className="books-grid">
+                  {
+                    this.state.searchBooks && this.state.searchBooks.length > 0 && this.state.searchBooks.map(book => (
+                      <li key={book.id}>
+                        <Book reload={this.reload.bind(this)} book={book} />
+                      </li>
+                    ))
+                  }
+              </ol>
             </div>
           </div>
         ) : (
@@ -69,7 +97,7 @@ class BooksApp extends React.Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                         {
-                          this.state.currentlyReadingBooks && this.state.currentlyReadingBooks.map(book => (
+                          this.state.currentlyReadingBooks  && this.state.currentlyReadingBooks.length > 0 && this.state.currentlyReadingBooks.map(book => (
                             <li key={book.id}>
                              <Book reload={this.reload.bind(this)} book={book} />
                             </li>
@@ -83,7 +111,7 @@ class BooksApp extends React.Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                       {
-                        this.state.wantToReadBooks && this.state.wantToReadBooks.map(book => (
+                        this.state.wantToReadBooks   && this.state.wantToReadBooks.length > 0 && this.state.wantToReadBooks.map(book => (
                           <li key={book.id}>
                             <Book reload={this.reload.bind(this)} book={book} />
                           </li>
@@ -97,7 +125,7 @@ class BooksApp extends React.Component {
                   <div className="bookshelf-books">
                     <ol className="books-grid">
                     {
-                        this.state.readBooks && this.state.readBooks.map(book => (
+                        this.state.readBooks  && this.state.readBooks.length > 0 && this.state.readBooks.map(book => (
                           <li key={book.id}>
                             <Book reload={this.reload.bind(this)} book={book} />
                           </li>
