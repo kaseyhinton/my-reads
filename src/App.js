@@ -1,14 +1,13 @@
-import React from 'react'
-import * as BooksAPI from './BooksAPI'
-import './App.css'
+import React from 'react';
+import * as BooksAPI from './BooksAPI';
+import './App.css';
 
 /* Components */
 import Book from './components/book';
 
 class BooksApp extends React.Component {
-
-  constructor(props){
-    super(props)
+  constructor(props) {
+    super(props);
     this.state = {
       /**
        * TODO: Instead of using this state variable to keep track of which page
@@ -24,7 +23,7 @@ class BooksApp extends React.Component {
       allBookIds: [],
       allBooks: [],
       searchTerm: ''
-    }
+    };
     this.handleChange = this.handleChange.bind(this);
   }
 
@@ -34,34 +33,48 @@ class BooksApp extends React.Component {
 
   async reload() {
     const books = await BooksAPI.getAll();
-    const currentlyReadingBooks = books.filter(book => book.shelf === 'currentlyReading');
+    const currentlyReadingBooks = books.filter(
+      book => book.shelf === 'currentlyReading'
+    );
     const wantToReadBooks = books.filter(book => book.shelf === 'wantToRead');
     const readBooks = books.filter(book => book.shelf === 'read');
-    const allBooks = [...currentlyReadingBooks, ...wantToReadBooks, ...readBooks];
+    const allBooks = [
+      ...currentlyReadingBooks,
+      ...wantToReadBooks,
+      ...readBooks
+    ];
     const allBookIds = allBooks.map(book => book.id);
-    this.setState({currentlyReadingBooks,wantToReadBooks,readBooks, allBooks, allBookIds});
+    this.setState({
+      currentlyReadingBooks,
+      wantToReadBooks,
+      readBooks,
+      allBooks,
+      allBookIds
+    });
   }
 
   async handleChange(event) {
     let searchTerm = event.target.value;
-    this.setState({searchTerm});
-    if (searchTerm === ''){
+    this.setState({ searchTerm });
+    if (searchTerm === '') {
       this.setState({
-        searchBooks : []
-      })
+        searchBooks: []
+      });
       return;
     }
     try {
       const searchBooks = await BooksAPI.search(searchTerm);
       // loop through results and identify if we already have any of those books on our shelves and place them in the proper shelf
       searchBooks.forEach(book => {
-        if(this.state.allBookIds.includes(book.id)) {
-          let bookOnShelf = this.state.allBooks.filter(b => b.id === book.id)[0];
+        if (this.state.allBookIds.includes(book.id)) {
+          let bookOnShelf = this.state.allBooks.filter(
+            b => b.id === book.id
+          )[0];
           book.shelf = bookOnShelf.shelf;
         }
       });
       this.setState({ searchBooks });
-    } catch(error) {
+    } catch (error) {
       this.setState({ searchBooks: [] });
     }
   }
@@ -72,20 +85,32 @@ class BooksApp extends React.Component {
         {this.state.showSearchPage ? (
           <div className="search-books">
             <div className="search-books-bar">
-              <a className="close-search" onClick={() => this.setState({ showSearchPage: false, searchBooks: [] })}>Close</a>
+              <a
+                className="close-search"
+                onClick={() =>
+                  this.setState({ showSearchPage: false, searchBooks: [] })
+                }
+              >
+                Close
+              </a>
               <div className="search-books-input-wrapper">
-                <input type="text" value={this.state.searchTerm} onChange={this.handleChange} placeholder="Search by title or author"/>
+                <input
+                  type="text"
+                  value={this.state.searchTerm}
+                  onChange={this.handleChange}
+                  placeholder="Search by title or author"
+                />
               </div>
             </div>
             <div className="search-books-results">
-               <ol className="books-grid">
-                  {
-                    this.state.searchBooks && this.state.searchBooks.length > 0 && this.state.searchBooks.map(book => (
-                      <li key={book.id}>
-                        <Book reload={this.reload.bind(this)} book={book} />
-                      </li>
-                    ))
-                  }
+              <ol className="books-grid">
+                {this.state.searchBooks &&
+                  this.state.searchBooks.length > 0 &&
+                  this.state.searchBooks.map(book => (
+                    <li key={book.id}>
+                      <Book reload={this.reload.bind(this)} book={book} />
+                    </li>
+                  ))}
               </ol>
             </div>
           </div>
@@ -100,13 +125,13 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Currently Reading</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                        {
-                          this.state.currentlyReadingBooks  && this.state.currentlyReadingBooks.length > 0 && this.state.currentlyReadingBooks.map(book => (
-                            <li key={book.id}>
-                             <Book reload={this.reload.bind(this)} book={book} />
-                            </li>
-                          ))
-                        }
+                      {this.state.currentlyReadingBooks &&
+                        this.state.currentlyReadingBooks.length > 0 &&
+                        this.state.currentlyReadingBooks.map(book => (
+                          <li key={book.id}>
+                            <Book reload={this.reload.bind(this)} book={book} />
+                          </li>
+                        ))}
                     </ol>
                   </div>
                 </div>
@@ -114,13 +139,13 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Want to Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                      {
-                        this.state.wantToReadBooks   && this.state.wantToReadBooks.length > 0 && this.state.wantToReadBooks.map(book => (
+                      {this.state.wantToReadBooks &&
+                        this.state.wantToReadBooks.length > 0 &&
+                        this.state.wantToReadBooks.map(book => (
                           <li key={book.id}>
                             <Book reload={this.reload.bind(this)} book={book} />
                           </li>
-                        ))
-                      }
+                        ))}
                     </ol>
                   </div>
                 </div>
@@ -128,26 +153,28 @@ class BooksApp extends React.Component {
                   <h2 className="bookshelf-title">Read</h2>
                   <div className="bookshelf-books">
                     <ol className="books-grid">
-                    {
-                        this.state.readBooks  && this.state.readBooks.length > 0 && this.state.readBooks.map(book => (
+                      {this.state.readBooks &&
+                        this.state.readBooks.length > 0 &&
+                        this.state.readBooks.map(book => (
                           <li key={book.id}>
                             <Book reload={this.reload.bind(this)} book={book} />
                           </li>
-                        ))
-                      }
+                        ))}
                     </ol>
                   </div>
                 </div>
               </div>
             </div>
             <div className="open-search">
-              <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
+              <a onClick={() => this.setState({ showSearchPage: true })}>
+                Add a book
+              </a>
             </div>
           </div>
         )}
       </div>
-    )
+    );
   }
 }
 
-export default BooksApp
+export default BooksApp;
