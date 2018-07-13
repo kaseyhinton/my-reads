@@ -17,12 +17,7 @@ class BooksApp extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentlyReadingBooks: [],
-      wantToReadBooks: [],
-      readBooks: [],
-      searchBooks: [],
-      allBookIds: [],
-      allBooks: []
+      books: []
     };
   }
 
@@ -31,25 +26,7 @@ class BooksApp extends React.Component {
   }
 
   async reload() {
-    const books = await BooksAPI.getAll();
-    const currentlyReadingBooks = books.filter(
-      book => book.shelf === 'currentlyReading'
-    );
-    const wantToReadBooks = books.filter(book => book.shelf === 'wantToRead');
-    const readBooks = books.filter(book => book.shelf === 'read');
-    const allBooks = [
-      ...currentlyReadingBooks,
-      ...wantToReadBooks,
-      ...readBooks
-    ];
-    const allBookIds = allBooks.map(book => book.id);
-    this.setState({
-      currentlyReadingBooks,
-      wantToReadBooks,
-      readBooks,
-      allBooks,
-      allBookIds
-    });
+    this.setState({ books: await BooksAPI.getAll() });
   }
 
   render() {
@@ -63,9 +40,7 @@ class BooksApp extends React.Component {
               <Main
                 {...props}
                 data={{
-                  currentlyReadingBooks: this.state.currentlyReadingBooks,
-                  wantToReadBooks: this.state.wantToReadBooks,
-                  readBooks: this.state.readBooks,
+                  books: this.state.books,
                   reload: this.reload.bind(this)
                 }}
               />
@@ -77,8 +52,7 @@ class BooksApp extends React.Component {
               <Search
                 {...props}
                 data={{
-                  allBooks: this.state.allBooks,
-                  allBookIds: this.state.allBookIds,
+                  books: this.state.books,
                   reload: this.reload.bind(this)
                 }}
               />
