@@ -17,7 +17,7 @@ export default class Book extends React.Component {
   render() {
     if (this.props.book)
       return (
-        <div className="book">
+        <div className="book" title={this.props.book.contentVersion}>
           <div className="book-top">
             {this.props.book.imageLinks &&
               this.props.book.imageLinks.smallThumbnail && (
@@ -34,7 +34,7 @@ export default class Book extends React.Component {
               )}
             <div className="book-shelf-changer">
               <select
-                value={this.props.book.shelf}
+                value={this.props.book.shelf || 'none'}
                 onChange={this.handleSelect}
               >
                 <option value="move" disabled>
