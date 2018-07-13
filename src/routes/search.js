@@ -17,10 +17,6 @@ export default class Main extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentWillReceiveProps(props) {
-    console.log(props);
-  }
-
   async handleChange(event) {
     let searchTerm = event.target.value;
     this.setState({ searchTerm });
@@ -33,12 +29,9 @@ export default class Main extends React.Component {
       // loop through results and identify if we already have any of those books on
       // our shelves and place them in the proper shelf
       searchBooks.forEach(book => {
-        if (this.props.data.allBookIds.includes(book.id)) {
-          let bookOnShelf = this.props.data.allBooks.filter(
-            b => b.id === book.id
-          )[0];
-          book.shelf = bookOnShelf.shelf;
-        }
+        this.props.data.books.forEach(shelvedBook => {
+          if (shelvedBook.id === book.id) book.shelf = shelvedBook.shelf;
+        });
       });
       this.setState({ searchBooks });
     } catch (error) {
