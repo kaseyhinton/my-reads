@@ -175,3 +175,7 @@ body,
   text-align: center;
   font-size: 0.8em;
 }
+.not-found {
+  margin: 0 auto;
+  width: 400px;
+}

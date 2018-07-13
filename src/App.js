@@ -9,6 +9,7 @@ import './App.css';
 /* Routes */
 import Main from './routes/main';
 import Search from './routes/search';
+import NoMatch from './routes/noMatch';
 
 /* Components */
 import { Switch, Route } from 'react-router-dom';
@@ -58,6 +59,7 @@ class BooksApp extends React.Component {
               />
             )}
           />
+          <Route component={NoMatch} />
         </Switch>
       </div>
     );
