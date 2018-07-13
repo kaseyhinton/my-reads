@@ -4,9 +4,6 @@ import React from 'react';
 import Book from '../components/book';
 
 export default class Main extends React.Component {
-  componentWillReceiveProps(props) {
-    console.log(props);
-  }
   render() {
     return (
       <div className="list-books">
@@ -19,13 +16,15 @@ export default class Main extends React.Component {
               <h2 className="bookshelf-title">Currently Reading</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {this.props.data.currentlyReadingBooks &&
-                    this.props.data.currentlyReadingBooks.length > 0 &&
-                    this.props.data.currentlyReadingBooks.map(book => (
-                      <li key={book.id}>
-                        <Book reload={this.props.data.reload} book={book} />
-                      </li>
-                    ))}
+                  {this.props.data.books &&
+                    this.props.data.books.length > 0 &&
+                    this.props.data.books
+                      .filter(book => book.shelf === 'currentlyReading')
+                      .map(book => (
+                        <li key={book.id}>
+                          <Book reload={this.props.data.reload} book={book} />
+                        </li>
+                      ))}
                 </ol>
               </div>
             </div>
@@ -33,13 +32,15 @@ export default class Main extends React.Component {
               <h2 className="bookshelf-title">Want to Read</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {this.props.data.wantToReadBooks &&
-                    this.props.data.wantToReadBooks.length > 0 &&
-                    this.props.data.wantToReadBooks.map(book => (
-                      <li key={book.id}>
-                        <Book reload={this.props.data.reload} book={book} />
-                      </li>
-                    ))}
+                  {this.props.data.books &&
+                    this.props.data.books.length > 0 &&
+                    this.props.data.books
+                      .filter(book => book.shelf === 'wantToRead')
+                      .map(book => (
+                        <li key={book.id}>
+                          <Book reload={this.props.data.reload} book={book} />
+                        </li>
+                      ))}
                 </ol>
               </div>
             </div>
@@ -47,13 +48,15 @@ export default class Main extends React.Component {
               <h2 className="bookshelf-title">Read</h2>
               <div className="bookshelf-books">
                 <ol className="books-grid">
-                  {this.props.data.readBooks &&
-                    this.props.data.readBooks.length > 0 &&
-                    this.props.data.readBooks.map(book => (
-                      <li key={book.id}>
-                        <Book reload={this.props.data.reload} book={book} />
-                      </li>
-                    ))}
+                  {this.props.data.books &&
+                    this.props.data.books.length > 0 &&
+                    this.props.data.books
+                      .filter(book => book.shelf === 'read')
+                      .map(book => (
+                        <li key={book.id}>
+                          <Book reload={this.props.data.reload} book={book} />
+                        </li>
+                      ))}
                 </ol>
               </div>
             </div>
